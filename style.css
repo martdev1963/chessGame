@@ -25,3 +25,29 @@
 .brown {
     background-color: rgb(169, 43, 43);
 }
+
+/* 
+-----------------------------------------------------------------------
+svgs work with the fill property: 
+This changes the svg files; the chess 
+pieces from index 15 and below to the color black...
+-----------------------------------------------------------------------
+*/
+.black {
+    fill: rgb(28, 28, 28);
+}
+
+/* 
+-----------------------------------------------------------------------
+svgs work with the fill property: 
+This changes the svg files; the chess 
+pieces from index 48 and above to the color white...
+-----------------------------------------------------------------------
+*/
+.white {
+    fill: rgb(255, 255, 255);
+}
+
+
+
+

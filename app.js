@@ -31,6 +31,20 @@ function createBoard() {
     } else {
         square.classList.add(i % 2 === 0 ?  "brown" : "beige") // do reverse...
     }
+
+    if (i <= 15) { // the 16th square at index 15 (0-15)
+      // turn all 2nd children's child (the svg file) of the squares from the 16th square and under to the color black...
+      square.firstChild.firstChild.classList.add('black');
+    }
+
+    if (i >= 48) { // the 16th square at index 15 (0-15)
+      // turn all 2nd children's child (the svg file) of the squares from the 16th square and under to the color black...
+      square.firstChild.firstChild.classList.add('white');
+    }
+
+
+
+
     gameBoard.append(square); // append each square to gameBoard...
 
   })
