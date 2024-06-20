@@ -22,7 +22,9 @@ function createBoard() {
   startPieces.forEach((startPiece, i) => {
     const square = document.createElement('div'); // creates square element/object...
     square.classList.add('square'); // create class square for above element...
-    square.innerHTML = startPiece; // insert the chess peices in each square...
+    square.innerHTML = startPiece; // insert the chess pieces in each square...
+    square.firstChild && square.firstChild.setAttribute('draggable', true);
+    //square.firstChild?.setAttribute('draggable', true);
     square.setAttribute('square-id', i);
     square.classList.add('beige'); // create class square for above element...
     const row = Math.floor( (63 - i) / 8) + 1;
@@ -53,3 +55,36 @@ function createBoard() {
 
 // call function to create the baord...
 createBoard();
+
+
+// grab all the squares and place in a list...
+const allSquares = document.querySelectorAll("#gameboard .square");
+console.log(allSquares);
+
+allSquares.forEach(square => {
+  square.addEventListener('dragstart', dragStart); // call these functions when events detected...
+  square.addEventListener('dragover', dragOver);
+});
+
+
+let startPositionId;
+let draggedElement;
+
+
+function dragStart (e) {
+  console.log(e.target.parentNode.getAttribute('square-id'));
+  startPositionId = e.target.parentNode.getAttribute('square-id');
+  draggedElement = e.target;
+
+}
+
+function dragOver () {
+  // vid_time: 30:43 / 1:28:05
+}
+
+
+
+
+
+
+
