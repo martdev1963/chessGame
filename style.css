@@ -6,17 +6,36 @@
     flex-wrap: wrap;
 }
 
+/* square class is a parent element */
 .square {
     height: 40px;
     width: 40px;
+    position: relative;
 }
 
+/* svg are children of the square class */
 .square svg {
     height: 30px;
     width:  30px;;
     margin: 5px;
+    position: relative;
+    z-index: -9; /*to place the current svg behind the square to place a new svg in that current square...*/
 
 }
+
+
+path {
+    position: relative;
+    z-index: -10; /*to place the path behind the svg */
+
+}
+
+.piece {
+    position: relative;
+    z-index: 9; /*to place the current svg behind the square to place a new svg in that current square...*/
+
+}
+
 
 .beige {
     background-color: rgb(110, 110 98);

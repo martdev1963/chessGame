@@ -4,6 +4,13 @@ const playerDisplay = document.querySelector("#player");
 const infoDIsplay = document.querySelector("#info-display");
 const width = 8;
 
+// the chessgame start state...
+let playerGo = 'black';
+playerDisplay.textContent = 'black';
+
+
+
+
 // array of 64 items...
 const startPieces = [
     rook, knight, bishop, queen, king, bishop, knight, rook, 
@@ -58,12 +65,13 @@ createBoard();
 
 
 // grab all the squares and place in a list...
-const allSquares = document.querySelectorAll("#gameboard .square");
+const allSquares = document.querySelectorAll(".square");
 console.log(allSquares);
 
 allSquares.forEach(square => {
   square.addEventListener('dragstart', dragStart); // call these functions when events detected...
   square.addEventListener('dragover', dragOver);
+  square.addEventListener('drop', dragDrop);
 });
 
 
@@ -71,20 +79,61 @@ let startPositionId;
 let draggedElement;
 
 
-function dragStart (e) {
+function dragStart(e) {
   console.log(e.target.parentNode.getAttribute('square-id'));
   startPositionId = e.target.parentNode.getAttribute('square-id');
   draggedElement = e.target;
 
 }
 
-function dragOver () {
-  // vid_time: 30:43 / 1:28:05
+function dragOver(e) {
+  e.preventDefault(); // prevent default action drag over...
+  //console.log(e.target);
 }
 
 
+function dragDrop(e) {
+  e.stopPropagation();
+
+  console.log(e.target);
+  const taken = e.target.classList.contains('piece');
+  
+  // code below for if there's already a piece in that square...and that its the opponent's piece
+  //e.target.parentNode.append(draggedElement); // drags the new svg into a square which is the parent node
+  //e.target.remove();
+  //e.target.append(draggedElement); // drags the new svg chess piece into an empty square...
+  
+  //call changePlayer()
+  changePlayer();
+}
+
+function changePlayer() {
+  if (playerGo === "black") {
+      reverseIds(); // call reverseIds() when its white player turn...
+      playerGo = "white";
+      playerDisplay.textContent = "white";
+  } else {
+      revertIds(); // call revertIds() when it's black player turn...
+      playerGo = "black";
+      playerDisplay.textContent = "black";
+  }
+
+}
 
 
+// function to reverse ids of square elements (elements of class square)...when white player goes...
+function reverseIds() {
+  const allSquares = document.querySelectorAll(".square");
+  allSquares.forEach((square, i) => 
+      square.setAttribute('square-id', (width * width - 1) - i))  // (64 - 1 == 63) - i ( - 0 ) 
+}                  // another way to look at it: replace i with (width * width - 1) vis-a-vis (64 - 1 == 63)
+
+// function to revert ids back to normal (when its black's go)
+function revertIds() {
+  // cur_vid_time: 42:57 / 1:28:05
+  const allSquares = document.querySelectorAll(".square");
+  allSquares.forEach((square, i) => square.setAttribute('square-id', i)); // like loc:35...
+}
 
 
 
