@@ -1,7 +1,7 @@
 // object/elements declarations...
 const gameBoard = document.querySelector("#gameboard");
 const playerDisplay = document.querySelector("#player");
-const infoDIsplay = document.querySelector("#info-display");
+const infoDisplay = document.querySelector("#info-display");
 const width = 8;
 
 // the chessgame start state...
@@ -95,17 +95,109 @@ function dragOver(e) {
 function dragDrop(e) {
   e.stopPropagation();
 
-  console.log(e.target);
+  draggedElement.firstChild.classList
+  //console.log(draggedElement);
+  const correctGo = draggedElement.firstChild.classList.contains(playerGo);
+  console.log('playerGo', playerGo);
+  console.log('e.target', e.target);
+  //console.log('opponentGo', opponentGo);
   const taken = e.target.classList.contains('piece');
-  
+  const valid = checkIfValid(this);
+  //const valid = checkIfValid(e.target.classList);
+  const opponentGo = playerGo === 'white' ? 'black' : 'white'; // if white, change to black else: white...
+  const takenByOpponent = e.target.firstChild?.classList.contains(opponentGo);
+  console.log('opponentGo', opponentGo);
+
+
+  // check if correct player, black/white...
+  if (correctGo) {
+    // cur_vid_time: 47:26 / 1:28:05
+      if (takenByOpponent && valid) {
+        e.target.parentNode.append(draggedElement); // append opponent's dragged chess piece... 
+        e.target.remove(); // and remove current chess piece...
+        changePlayer();
+        return // exit if condition...
+      }
+
+      // check to see thatr player doesn't try to go on this square because its taken...
+      if (taken && !takenByOpponent) {
+          infoDisplay.textContent = "you can't go here!";
+          setTimeout(() => infoDisplay.textContent = "", 2000);
+          return
+      }
+      if (valid) {
+        e.target.append(draggedElement);
+        changePlayer();
+        return // exit if condition...
+      }
+
+  }
+
   // code below for if there's already a piece in that square...and that its the opponent's piece
   //e.target.parentNode.append(draggedElement); // drags the new svg into a square which is the parent node
   //e.target.remove();
   //e.target.append(draggedElement); // drags the new svg chess piece into an empty square...
   
   //call changePlayer()
-  changePlayer();
 }
+
+
+function checkIfValid(target) {
+  console.log('this output coming from func: checkIfValid', target);
+                          // if target is a square        or if target is a chess piece that current play is landing on... 
+  const targetId = Number(target.getAttribute('square-id')) || Number(target.parentNode.getAttribute('square-id'));
+  const startId = Number(startPositionId);   // in loc: 78 and loc: 84
+  const piece = draggedElement.id;
+  console.log('targetId', targetId);
+  console.log('startId', startId);
+  console.log('piece', piece);
+
+
+/*
+----------
+NICE EXPLANATION for LOC:169 in switch(){}
+If I drag this a pawn at square id 8: (the first pawn) the startId is then 8. 
+Whats the targetId? 8 + the (width(8) * 2) == 16  8 + 16 == 24 (the targetId)
+This would equate to be a valid move...
+Math is being used to essentially say which moves are valid...
+A diagonal move with a pawn would not be a valid move...this would reflect in the math result...
+Using the target id as the end result in the math computation...also using the startId and the width constant in the 
+math computation.
+
+
+----------
+*/
+
+  switch(piece) {
+      case 'pawn' : 
+          const starterRow = [8, 9, 10, 11, 12, 13, 14, 15];
+                                
+          if (starterRow.includes(startId) && startId + width * 2 === targetId || 
+          startId + width === targetId ||
+          // checking to see if their is an opponent pawn when player is making a diagonal move (an attack)
+          startId + width - 1 === targetId && document.querySelector(`[square-id="${startId + width - 1}"]`).firstChild ||
+          startId + width + 1 === targetId && document.querySelector(`[square-id="${startId + width + 1}"]`).firstChild
+          ) {
+              return true;
+          }
+          break;
+      case 'knight' : // cur_vid_time: 1:03:00 / 1:28:05
+
+
+
+  }
+
+
+
+} // end of checkIfValid() function scope... 
+
+
+
+
+
+
+
+
 
 function changePlayer() {
   if (playerGo === "black") {
