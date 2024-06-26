@@ -152,7 +152,6 @@ function checkIfValid(target) {
   console.log('startId', startId);
   console.log('piece', piece);
 
-
 /*
 ----------
 NICE EXPLANATION for LOC:169 in switch(){}
@@ -163,8 +162,6 @@ Math is being used to essentially say which moves are valid...
 A diagonal move with a pawn would not be a valid move...this would reflect in the math result...
 Using the target id as the end result in the math computation...also using the startId and the width constant in the 
 math computation.
-
-
 ----------
 */
 
@@ -181,9 +178,24 @@ math computation.
               return true;
           }
           break;
-      case 'knight' : // cur_vid_time: 1:03:00 / 1:28:05
-
-
+      case 'knight' : 
+       // how does the knight move: (add startId to the width * 2) - 1 (that L shape move)
+          if (
+            // this translates to valid moves for a knight...
+            startId + width * 2 + 1 === targetId ||   // L shape...regular downward move
+            startId + width * 2 - 1 === targetId ||   // backwards L shape...
+            startId + width - 2 === targetId ||       // right-side up lying L long-side pointing left...
+            startId + width + 2 === targetId ||       // right-side up lying L long-side pointing right...
+            // these are so the knight can also move backwards...
+            startId - width * 2 + 1 === targetId || // L shape...backward (upward )move landing to the right
+            startId - width * 2 - 1 === targetId || // backwards L shape  (upward )move landing to the left
+            startId - width - 2 === targetId ||  // upside-down lying L long-side pointing left...
+            startId - width + 2 === targetId     // upside-down lying L long-side pointing right...
+          ) {
+            return true;
+          }
+          break;
+          // cur_vid_time: 1:05:11 / 1:28:05 
 
   }
 
