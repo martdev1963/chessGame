@@ -41,12 +41,12 @@ function createBoard() {
         square.classList.add(i % 2 === 0 ?  "brown" : "beige") // do reverse...
     }
 
-    if (i <= 15) { // the 16th square at index 15 (0-15)
+    if (i <= 15) { // the 16th square at index 15 (0-15)(1-16)
       // turn all 2nd children's child (the svg file) of the squares from the 16th square and under to the color black...
       square.firstChild.firstChild.classList.add('black');
     }
 
-    if (i >= 48) { // the 16th square at index 15 (0-15)
+    if (i >= 48) { // the 49th square at index 48 (48-63)(49-64)
       // turn all 2nd children's child (the svg file) of the squares from the 16th square and under to the color black...
       square.firstChild.firstChild.classList.add('white');
     }
@@ -74,14 +74,14 @@ allSquares.forEach(square => {
   square.addEventListener('drop', dragDrop);
 });
 
-
+// global variable declarations...
 let startPositionId;
 let draggedElement;
 
 
 function dragStart(e) {
   console.log(e.target.parentNode.getAttribute('square-id'));
-  startPositionId = e.target.parentNode.getAttribute('square-id');
+  startPositionId = e.target.parentNode.getAttribute('square-id'); // global variable initialization...
   draggedElement = e.target;
 
 }
@@ -116,19 +116,19 @@ function dragDrop(e) {
         e.target.parentNode.append(draggedElement); // append opponent's dragged chess piece... 
         e.target.remove(); // and remove current chess piece...
         changePlayer();
-        return // exit if condition...
+        return // exit if condition...exit function
       }
 
-      // check to see thatr player doesn't try to go on this square because its taken...
+      // check to see that player doesn't try to go on this square because its taken...
       if (taken && !takenByOpponent) {
           infoDisplay.textContent = "you can't go here!";
           setTimeout(() => infoDisplay.textContent = "", 2000);
-          return
+          return  // exit if condition...exit function
       }
       if (valid) {
         e.target.append(draggedElement);
         changePlayer();
-        return // exit if condition...
+        return // exit if condition...exit function
       }
 
   }
@@ -155,7 +155,7 @@ function checkIfValid(target) {
 /*
 ----------
 NICE EXPLANATION for LOC:169 in switch(){}
-If I drag this a pawn at square id 8: (the first pawn) the startId is then 8. 
+If I drag a pawn at square id 8: (the first pawn) the startId is then 8. 
 Whats the targetId? 8 + the (width(8) * 2) == 16  8 + 16 == 24 (the targetId)
 This would equate to be a valid move...
 Math is being used to essentially say which moves are valid...
@@ -166,7 +166,7 @@ math computation.
 */
 
   switch(piece) {
-      case 'pawn' : 
+      case 'pawn' : // pawn logic
           const starterRow = [8, 9, 10, 11, 12, 13, 14, 15];
                                 
           if (starterRow.includes(startId) && startId + width * 2 === targetId || 
@@ -178,8 +178,8 @@ math computation.
               return true;
           }
           break;
-      case 'knight' : 
-       // how does the knight move: (add startId to the width * 2) - 1 (that L shape move)
+      case 'knight' : // knight logic 
+       // how the knight moves: (add startId to the width * 2) + 1 (that L shape move)
           if (
             // this translates to valid moves for a knight...
             startId + width * 2 + 1 === targetId ||   // L shape...regular downward move
@@ -195,7 +195,55 @@ math computation.
             return true;
           }
           break;
-          // cur_vid_time: 1:05:11 / 1:28:05 
+          
+      case 'bishop': // bishop logic... x-axis  y-axis
+          if ( // startId = x width = y  + 1 = x+1  the math translates to the bishop's geometrically diagonal trajectory...
+              // code establishes the navigation via the element's ids for traversing the geometric shape of the created object at hand, the chessboard.
+              // -- diagonally forward moves...SE (south-east)
+              startId + width + 1 === targetId || //          make sure a piece is not in the previous move's target position...
+              start + width * 2 + 2 && !document.querySelector(`[square-id="${startId + width + 1}"]`).firstChild ||
+              start + width * 3 + 3 && !document.querySelector(`[square-id="${startId + width + 1}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 2 + 2}"]`).firstChild || 
+              start + width * 4 + 4 && !document.querySelector(`[square-id="${startId + width + 1}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 2 + 2}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 3 + 3}"]`).firstChild ||
+              start + width * 5 + 5 && !document.querySelector(`[square-id="${startId + width + 1}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 2 + 2}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 3 + 3}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 4 + 4}"]`).firstChild ||
+              start + width * 6 + 6 && !document.querySelector(`[square-id="${startId + width + 1}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 2 + 2}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 3 + 3}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 4 + 4}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 5 + 5}"]`).firstChild ||
+              start + width * 7 + 7 && !document.querySelector(`[square-id="${startId + width + 1}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 2 + 2}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 3 + 3}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 4 + 4}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 5 + 5}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 6 + 6}"]`).firstChild ||
+              
+              // -- diagonally backward moves...NW (north-west)
+              startId - width - 1 === targetId || //          make sure a piece is not in the previous move's target position...
+              start - width * 2 - 2 && !document.querySelector(`[square-id="${startId - width - 1}"]`).firstChild ||
+              start - width * 3 - 3 && !document.querySelector(`[square-id="${startId - width - 1}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 2 - 2}"]`).firstChild || 
+              start - width * 4 - 4 && !document.querySelector(`[square-id="${startId - width - 1}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 2 - 2}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 3 - 3}"]`).firstChild ||
+              start - width * 5 - 5 && !document.querySelector(`[square-id="${startId - width - 1}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 2 - 2}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 3 - 3}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 4 - 4}"]`).firstChild ||
+              start - width * 6 - 6 && !document.querySelector(`[square-id="${startId - width - 1}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 2 - 2}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 3 - 3}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 4 - 4}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 5 - 5}"]`).firstChild ||
+              start - width * 7 - 7 && !document.querySelector(`[square-id="${startId - width - 1}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 2 - 2}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 3 - 3}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 4 - 4}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 5 - 5}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 6 - 6}"]`).firstChild ||
+              // vid_time: 1:11:36 / 1:28:05 
+              
+              // -- diagonally forward moves...SW (south-wast)
+              startId + width - 1 === targetId || //          make sure a piece is not in the previous move's target position...
+              start + width * 2 - 2 && !document.querySelector(`[square-id="${startId + width - 1}"]`).firstChild ||
+              start + width * 3 - 3 && !document.querySelector(`[square-id="${startId + width - 1}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 2 - 2}"]`).firstChild || 
+              start + width * 4 - 4 && !document.querySelector(`[square-id="${startId + width - 1}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 2 - 2}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 3 - 3}"]`).firstChild ||
+              start + width * 5 - 5 && !document.querySelector(`[square-id="${startId + width - 1}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 2 - 2}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 3 - 3}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 4 - 4}"]`).firstChild ||
+              start + width * 6 - 6 && !document.querySelector(`[square-id="${startId + width - 1}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 2 - 2}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 3 - 3}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 4 - 4}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 5 - 5}"]`).firstChild ||
+              start + width * 7 - 7 && !document.querySelector(`[square-id="${startId + width - 1}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 2 - 2}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 3 - 3}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 4 - 4}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 5 - 5}"]`).firstChild && !document.querySelector(`[square-id="${startId + width * 6 - 6}"]`).firstChid ||
+              // vid_time: 1:12:36 / 1:28:05 
+
+              // -- diagonally backward moves...NE (north-east)
+              startId - width + 1 === targetId || //          make sure a piece is not in the previous move's target position...
+              start - width * 2 + 2 && !document.querySelector(`[square-id="${startId - width + 1}"]`).firstChild ||
+              start - width * 3 + 3 && !document.querySelector(`[square-id="${startId - width + 1}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 2 + 2}"]`).firstChild || 
+              start - width * 4 + 4 && !document.querySelector(`[square-id="${startId - width + 1}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 2 + 2}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 3 + 3}"]`).firstChild ||
+              start - width * 5 + 5 && !document.querySelector(`[square-id="${startId - width + 1}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 2 + 2}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 3 + 3}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 4 + 4}"]`).firstChild ||
+              start - width * 6 + 6 && !document.querySelector(`[square-id="${startId - width + 1}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 2 + 2}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 3 + 3}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 4 + 4}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 5 + 5}"]`).firstChild ||
+              start - width * 7 + 7 && !document.querySelector(`[square-id="${startId - width + 1}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 2 + 2}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 3 + 3}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 4 + 4}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 5 + 5}"]`).firstChild && !document.querySelector(`[square-id="${startId - width * 6 + 6}"]`).firstChid
+              // vid_time: 1:13:52 / 1:28:05 
+          ) { 
+
+              return true;
+          }    
+          break;  
+
+          // cur_vid_time: 1:14:11 / 1:28:05 // rook logic next...
 
   }
 
